@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Document</title>
+	</head>
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, sans-serif;
+			background-color: #f9f9f9;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			min-height: 100vh;
+		}
+		.grid {
+			display: grid;
+			grid-template-columns: repeat(3, 200px); /* 3 columnas fijas */
+			gap: 10px;
+			justify-content: center;
+			padding: 20px;
+		}
+
+		.grid img {
+			width: 200px;
+			height: 200px;
+			object-fit: cover;
+			border-radius: 8px;
+			box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+		}
+		button {
+			margin-bottom: 20px;
+			padding: 10px 20px;
+			font-size: 16px;
+			background-color: #007bff;
+			color: white;
+			border: none;
+			border-radius: 6px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+		}
+
+		button:hover {
+			background-color: #0056b3;
+		}
+	</style>
+	<script>
+		const BASE_URL = "https://picsum.photos";
+		const generateRandomNumber = () => Math.floor(Math.random() * 100) + 1;
+		const SQUARE_IMAGE_SIZE = "200";
+		const getRandomImages = async () => {
+			const response = await fetch(
+				`${BASE_URL}/v2/list?page=${generateRandomNumber()}&limit=10`
+			);
+			const data = await response.json();
+			return data;
+		};
+
+		const createImageElement = (src) => {
+			console.log(";src", src);
+			const img = document.createElement("img");
+			img.src = src;
+			img.alt = "Random Image";
+			img.style.width = "200px";
+			img.style.height = "200px";
+			return img;
+		};
+		const createGallery = async () => {
+			const images = await getRandomImages();
+			console.log(images);
+			const GALLERY = document.getElementById("gallery");
+			images.forEach((image) => {
+				const imgElement = createImageElement(image.download_url);
+				if (!GALLERY) {
+					console.error("Gallery element not found");
+					return;
+				}
+				GALLERY.appendChild(imgElement);
+			});
+		};
+		const init = async () => {
+			await createGallery();
+		};
+	</script>
+	<body onload="init()">
+		<h1>Jocobi Random Image Gallery</h1>
+		<div id="gallery" class="grid"></div>
+		<button onclick="location.reload()">Actualizar</button>
+	</body>
+</html>
